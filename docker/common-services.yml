@@ -30,7 +30,7 @@ services:
     #   - redis
     #   - crawler
   mongo:
-    image: mongo:latest
+    image: mongo:3.4.16
     ports:
       - "127.0.0.1:27017:27017"
     volumes:
@@ -69,6 +69,6 @@ services:
       - CRAWLER_QUEUE_PROVIDER=amqp
       - CRAWLER_AMQP_URL=amqp://rabbitmq:5672
       - CRAWLER_RABBIT_MANAGER_ENDPOINT=http://guest:guest@rabbitmq:15672
-      - CRAWLER_GITHUB_TOKENS=${CRAWLER_GITHUB_TOKENS}
+      - CRAWLER_GITHUB_TOKENS=35f7b4e86a7ed60d658f8c34dfe429cb589818d3
       - CRAWLER_OPTIONS_PROVIDER=redis
       - CRAWLER_EVENT_PROVIDER=none

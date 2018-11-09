@@ -147,10 +147,15 @@ class GitHubProcessor {
     // * subscriptions
     // * orgs???
     const document = request.document;
+    document.events_url = `https://api.github.com/users/${document.login}/events`;
+    console.log(document);
+
     request.addRootSelfLink();
     request.linkSiblings('urn:users');
 
     this._addCollection(request, 'repos', 'repo');
+    this._addCollection(request, 'events', null);
+
     return document;
   }
 
@@ -158,6 +163,7 @@ class GitHubProcessor {
   // commit comment, issue, issue comment, pull request review comment
 
   repo(request) {
+    console.log("****************$$$$$$$$$$$$$__________________________HERE___________________")
     // TODO links to consider
     // * forks  *** not yet
     // * deployments
@@ -198,7 +204,8 @@ class GitHubProcessor {
     this._addCollection(request, 'issues', 'issue', document.issues_url.replace('{/number}', '?state=all'));
     this._addCollection(request, 'commits', 'commit', document.commits_url.replace('{/sha}', ''));
     this._addCollection(request, 'events', null);
-
+    console.log("Reeeeeeppppo Pooooooooooolo OH HI From a repo!!!!!!!!!!!!!!!! ********************************************")
+    console.log(document)
     return document;
   }
 
@@ -812,7 +819,7 @@ class GitHubProcessor {
 
   isCollectionType(request) {
     const collections = new Set([
-      'collaborators', 'commit_comments', 'commits', 'contributors', 'events', 'issues', 'issue_comments', 'members', 'orgs', 'pull_request_commit_comments', 'pull_request_commits', 'repos', 'reviews', 'review_comments', 'subscribers', 'stargazers', 'statuses', 'teams'
+      'collaborators', 'commit_comments', 'commits', 'contributors', 'events', 'issues', 'issue_comments', 'members', 'orgs', 'pull_request_commit_comments', 'pull_request_commits', 'repos', 'reviews', 'review_comments', 'subscribers', 'stargazers', 'statuses', 'teams', 'followers'
     ]);
     return collections.has(request.type);
   }
