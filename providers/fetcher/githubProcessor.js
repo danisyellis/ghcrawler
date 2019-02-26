@@ -154,7 +154,7 @@ class GitHubProcessor {
     request.linkSiblings('urn:users');
 
     this._addCollection(request, 'repos', 'repo');
-    this._addCollection(request, 'events', null);
+    this._addCollection(request, 'events', 'event');
 
     return document;
   }
@@ -163,7 +163,6 @@ class GitHubProcessor {
   // commit comment, issue, issue comment, pull request review comment
 
   repo(request) {
-    console.log("****************$$$$$$$$$$$$$__________________________HERE___________________")
     // TODO links to consider
     // * forks  *** not yet
     // * deployments
@@ -201,11 +200,13 @@ class GitHubProcessor {
     if (document.stargazers_count) {
       this._addRelation(request, 'stargazers', 'user');
     }
+    console.log("THE DOCUMENT WAS:", document);
+
     this._addCollection(request, 'issues', 'issue', document.issues_url.replace('{/number}', '?state=all'));
     this._addCollection(request, 'commits', 'commit', document.commits_url.replace('{/sha}', ''));
-    this._addCollection(request, 'events', null);
-    console.log("Reeeeeeppppo Pooooooooooolo OH HI From a repo!!!!!!!!!!!!!!!! ********************************************")
-    console.log(document)
+    this._addCollection(request, 'events', 'event', document.events_url.replace('{/privacy}', ''));
+    console.log("THE DOCUMENT IS:", document);
+
     return document;
   }
 

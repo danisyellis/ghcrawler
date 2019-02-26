@@ -51,6 +51,12 @@ function processOne() {
 }
 
 function checkDoc(type, urn, queuedCount) {
+  console.log("URN         ", urn);
+  console.log("Type:       ", type);
+  console.log("TYpe in collection", crawler.store.collections[type]);
+  console.log("colections: ", crawler.store.collections);
+  console.log("collections type urn????? do you exist??: ", crawler.store.collections[type][urn]);
+
   const doc = crawler.store.collections[type][urn];
   expect(!!doc).to.be.equal(true, urn);
   expect(doc._metadata.links.self.href).to.be.equal(urn, urn);

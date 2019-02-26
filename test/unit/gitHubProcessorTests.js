@@ -81,7 +81,7 @@ describe('URN building', () => {
     const request = createRequest('repo', 'http://test.com/foo');
     request.policy = TraversalPolicy.refresh('repo');
     request.policy.freshness = 'always';
-    request.document = { _metadata: { links: {} }, id: 42, owner: { url: 'http://test.com/test' }, teams_url: 'http://test.com/teams', issues_url: 'http://test.com/issues', commits_url: 'http://test.com/commits', collaborators_url: 'http://test.com/collaborators' };
+    request.document = { _metadata: { links: {} }, id: 42, owner: { url: 'http://test.com/test' }, teams_url: 'http://test.com/teams', events_url: 'http://test.com/events', issues_url: 'http://test.com/issues', commits_url: 'http://test.com/commits', collaborators_url: 'http://test.com/collaborators' };
     request.crawler = { queue: () => { }, queues: { pushPriority: () => { } } };
     const queue = sinon.spy(request.crawler, 'queue');
     // sinon.spy(request.crawler.queues, 'pushPriority');
@@ -179,6 +179,7 @@ describe('User processing', () => {
       _metadata: { links: {} },
       id: 9,
       repos_url: 'http://repos',
+      events_url: 'http://events'
     };
 
     const processor = new GitHubProcessor();
@@ -187,12 +188,14 @@ describe('User processing', () => {
     const links = {
       self: { href: 'urn:user:9', type: 'resource' },
       siblings: { href: 'urn:users', type: 'collection' },
-      repos: { href: 'urn:user:9:repos', type: 'collection' }
+      repos: { href: 'urn:user:9:repos', type: 'collection' },
+      events: {href: 'urn:user:9:events', type: 'collection'}
     }
     expectLinks(document._metadata.links, links);
 
     const expected = [
       { type: 'repos', url: 'http://repos', qualifier: 'urn:user:9', path: '/repos' },
+      { type: 'events', url: 'http://events', qualifier: 'urn:user:9', path: '/events'},
     ];
     expectQueued(queue, expected);
   });
