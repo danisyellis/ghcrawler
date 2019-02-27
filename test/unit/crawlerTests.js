@@ -922,7 +922,7 @@ describe('Crawler whole meal deal', () => {
     const request = new Request('user', 'http://test.com/users/user1');
     request.policy = TraversalPolicy.reload('user');
     normal.requests = [request];
-    crawler.fetcher.responses = [createResponse({ id: 42, repos_url: 'http://test.com/users/user1/repos' })];
+    crawler.fetcher.responses = [createResponse({ id: 42, repos_url: 'http://test.com/users/user1/repos', login: 'user1' })];
 
     return Q.try(() => {
       return crawler.processOne({ name: 'test' });
@@ -931,15 +931,15 @@ describe('Crawler whole meal deal', () => {
         const unlock = crawler.locker.unlock;
         expect(unlock.callCount).to.be.equal(1);
         expect(unlock.getCall(0).args[0]).to.be.equal('lockToken');
-
         expect(normal.done.callCount).to.be.equal(1);
-
-        expect(normal.queue.length).to.be.equal(2);
-        const newRequest = normal.queue[0];
-        expect(newRequest.type).to.be.equal('repos');
-        const requeue = normal.queue[1];
-        expect(requeue.type).to.be.equal('user');
-        expect(requeue.attemptCount).to.be.equal(1);
+        expect(normal.queue.length).to.be.equal(3);
+        const reposQueue = normal.queue[0];
+        expect(reposQueue.type).to.be.equal('repos');
+        const eventsQueue = normal.queue[1];
+        expect(eventsQueue.type).to.be.equal('events');
+        const userQueue = normal.queue[2];
+        expect(userQueue.type).to.be.equal('user');
+        expect(userQueue.attemptCount).to.be.equal(1);
 
         expect(crawler.logger.error.callCount).to.be.equal(1);
         const error = crawler.logger.error.getCall(0).args[0];
