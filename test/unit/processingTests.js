@@ -19,7 +19,7 @@ describe('Simple processing', () => {
         .then(processOne)
         .then(checkDoc.bind(null, 'org', 'urn:org:1', 4))
         .then(processOne)
-        .then(checkDoc.bind(null, 'user', 'urn:user:1', 1))
+        .then(checkDoc.bind(null, 'user', 'urn:user:1', 2))
         .then(processOne)
         .then(checkDoc.bind(null, 'repos', 'urn:org:1:repos:page:1', 0))
         .then(processOne)
@@ -29,7 +29,7 @@ describe('Simple processing', () => {
         .then(processOne)
         .then(checkDoc.bind(null, 'repos', 'urn:org:1:repos:page:1', 0))
         .then(processOne)
-        .then(checkDoc.bind(null, 'user', 'urn:user:2', 1))  // queued as a member of the org
+        .then(checkDoc.bind(null, 'user', 'urn:user:2', 2))  // queued as a member of the org
         .then(processOne)
         .then(checkDoc.bind(null, 'team', 'urn:team:20', 2))
         .then(processOne)
@@ -58,6 +58,11 @@ function checkDoc(type, urn, queuedCount) {
   console.log("collections type urn????? do you exist??: ", crawler.store.collections[type][urn]);
 
   const doc = crawler.store.collections[type][urn];
+  // doc is undefined because crawler.store.collections[type][urn] is undefined
+  //I think that's because, if you look at the logs, the urn is user:1, but it's looking for an urn of user:2
+    //I can't figure out where to change it expecting that
+      //I tried on line 32, and that worked, but then it didn't queue anything, so if that's the answer, there's more to do...
+  console.log("Doc****", doc);
   expect(!!doc).to.be.equal(true, urn);
   expect(doc._metadata.links.self.href).to.be.equal(urn, urn);
   const queued = gatherQueued(spies.queueSpy);
@@ -139,6 +144,7 @@ const resources = {
       "id": 1,
       "url": "https://api.github.com/users/test",
       "repos_url": "https://api.github.com/users/test/repos",
+      "events_url": "https://api.github.com/users/user1/events",
     }
   },
   'https://api.github.com/users/user2': {
@@ -147,6 +153,7 @@ const resources = {
       "id": 2,
       "url": "https://api.github.com/users/user2",
       "repos_url": "https://api.github.com/users/user2/repos",
+      "events_url": "https://api.github.com/users/user2/events"
     }
   },
   'https://api.github.com/users/user2/repos': {

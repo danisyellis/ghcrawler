@@ -147,14 +147,14 @@ class GitHubProcessor {
     // * subscriptions
     // * orgs???
     const document = request.document;
-    document.events_url = `https://api.github.com/users/${document.login}/events`;
+    //document.events_url = `https://api.github.com/users/${document.login}/events`;
     console.log(document);
 
     request.addRootSelfLink();
     request.linkSiblings('urn:users');
 
     this._addCollection(request, 'repos', 'repo');
-    this._addCollection(request, 'events', null, document.events_url.replace('{/privacy}', ''));
+    this._addCollection(request, 'events', null);
 
     return document;
   }
