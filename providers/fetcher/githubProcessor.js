@@ -154,7 +154,7 @@ class GitHubProcessor {
     request.linkSiblings('urn:users');
 
     this._addCollection(request, 'repos', 'repo');
-    this._addCollection(request, 'events', 'event', document.events_url.replace('{/privacy}', ''));
+    this._addCollection(request, 'events', null, document.events_url.replace('{/privacy}', ''));
 
     return document;
   }
