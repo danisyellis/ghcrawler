@@ -179,7 +179,8 @@ describe('User processing', () => {
       _metadata: { links: {} },
       id: 9,
       repos_url: 'http://repos',
-      events_url: 'http://events'
+      events_url: 'https://api.github.com/users/testuser/events',
+      login: 'testuser'
     };
 
     const processor = new GitHubProcessor();
@@ -195,7 +196,7 @@ describe('User processing', () => {
 
     const expected = [
       { type: 'repos', url: 'http://repos', qualifier: 'urn:user:9', path: '/repos' },
-      { type: 'events', url: 'http://events', qualifier: 'urn:user:9', path: '/events'},
+      { type: 'events', url: 'https://api.github.com/users/testuser/events', qualifier: 'urn:user:9', path: '/events'},
     ];
     expectQueued(queue, expected);
   });
