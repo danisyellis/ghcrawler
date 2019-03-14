@@ -613,6 +613,11 @@ class GitHubProcessor {
 
   IssuesEvent(request) {
     let [document, repo, payload] = this._addEventBasics(request);
+    if (['deleted', 'transferred'].includes(payload.action)) {
+      const context = { deletedAt: request.payload.fetchedAt, cacheKey: `urn:repo:${repo}:issue:${payload.issue.id}` };
+      const policy = this._getNextDeletedPolicy();
+      return this._addEventResource(request, repo, 'issue', 'issue', null, context, policy);
+    }
     this._addEventResource(request, repo, 'issue');
     if (payload.assignee) {
       this._addEventResource(request, null, 'assignee', 'user');
@@ -708,7 +713,11 @@ class GitHubProcessor {
       request.queue('LegacyPullRequestReviewCommentEvent', request.document.payload.comment.pull_request_url, request.policy, context);
       return null;
     }
-    let [, repo, payload] = this._addEventBasics(request);
+    let [document, repo, payload] = this._addEventBasics(request);
+    // Sometimes payload.pull_request is null instead of an object.
+    if (!payload.pull_request) {
+      return document;
+    }
     const qualifier = `urn:repo:${repo}:pull_request:${payload.pull_request.id}`;
     if (payload.action === 'deleted') {
       const context = { deletedAt: request.payload.fetchedAt };
